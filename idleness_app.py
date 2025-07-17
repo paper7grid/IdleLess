@@ -1,69 +1,56 @@
-# IdleLess: Traffic Idle Time Visualization Streamlit App
+# IdleLess: Traffic Idle Time Visualization Streamlit App (Simplified for SF & Fremont)
 
 import streamlit as st
 import pandas as pd
 import altair as alt
-import requests
-from datetime import datetime
 
 st.set_page_config(page_title="IdleLess Dashboard", page_icon="🚦")
 st.title("🚦 IdleLess: Reducing Urban Idle Time")
 
 st.write("""
-This app analyzes traffic patterns and idle-heavy times using publicly available datasets to help reduce unnecessary emissions and time lost in traffic. Our goal is to visualize when and where cars tend to idle the most and provide actionable insights.
+This app focuses on traffic idle patterns in **San Francisco (SF)** and **Fremont**, visualizing the hours of the day when idling peaks. This helps drivers make better choices and highlights unnecessary fuel waste.
 """)
 
-# --- LOAD DATA ---
-@st.cache_data
-def load_sample_data():
-    # Replace with real API or dataset
-    url = "https://raw.githubusercontent.com/plotly/datasets/master/2011_february_us_airport_traffic.csv"
-    df = pd.read_csv(url)
-    df = df.rename(columns={"cnt": "idle_time_estimate"})
-    df = df.head(100)  # Simulated small dataset
-    df["city"] = df["airport"].apply(lambda x: x[:3])
-    df["hour"] = pd.Series([i % 24 for i in range(len(df))])
-    return df
+# --- Simplified Static Data ---
+data = {
+    "city": ["SF"] * 6 + ["Fremont"] * 6,
+    "hour": ["6:00 AM", "9:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"] * 2,
+    "idle_time_estimate": [12, 25, 15, 20, 30, 10, 8, 18, 10, 14, 22, 6]
+}
+df = pd.DataFrame(data)
 
-traffic_df = load_sample_data()
+# --- Select City ---
+cities = df["city"].unique().tolist()
+selected_city = st.radio("Choose a city:", cities, horizontal=True)
+filtered_df = df[df["city"] == selected_city]
 
-# --- USER FILTERS ---
-cities = traffic_df["city"].unique().tolist()
-selected_city = st.selectbox("Select a city code:", cities)
-
-filtered_df = traffic_df[traffic_df["city"] == selected_city]
-
-# --- CHART: IDLE TIME BY HOUR ---
-st.subheader(f"Idle Time Pattern for {selected_city}")
+# --- Idle Time Chart ---
+st.subheader(f"Estimated Idle Time by Hour in {selected_city}")
 chart = (
     alt.Chart(filtered_df)
-    .mark_bar(color="orangered")
+    .mark_bar(color="#ff6347")
     .encode(
-        x=alt.X("hour:O", title="Hour of Day"),
-        y=alt.Y("idle_time_estimate:Q", title="Estimated Idle Time (minutes)"),
+        x=alt.X("hour", sort=None, title="Hour of Day"),
+        y=alt.Y("idle_time_estimate", title="Idle Time (minutes)"),
         tooltip=["hour", "idle_time_estimate"]
     )
     .properties(height=400)
 )
 st.altair_chart(chart, use_container_width=True)
 
-# --- TEXT INSIGHT ---
+# --- Summary ---
 max_idle = filtered_df["idle_time_estimate"].max()
 worst_hour = filtered_df.loc[filtered_df["idle_time_estimate"].idxmax(), "hour"]
 
-st.markdown(f"⏱️ **Peak Idle Hour**: Around **{worst_hour}:00**, with up to **{int(max_idle)} minutes** of estimated idle time.")
+st.markdown(f"⏱️ **Worst Idle Time** in {selected_city} is at **{worst_hour}**, with about **{max_idle} minutes** wasted.")
 
-# --- ADDITIONAL CONTEXT ---
+# --- Notes ---
 st.markdown("""
-### Why This Matters:
-- Car idling contributes to **greenhouse gas emissions** and **fuel waste**.
-- Understanding idle patterns helps city planners improve traffic signal timing.
-- Drivers can save money and time by avoiding peak idle periods.
-
-### Data Notes:
-- Idle time estimates are simulated from airport traffic data for demo purposes.
-- Real implementation would use APIs like **OpenTraffic**, **Bay Area 511**, or **EPA emission datasets**.
-
 ---
-*Built with Streamlit, Pandas, Altair. Inspired by real-world inefficiencies in city traffic systems.*
+### 🚗 Why This Project?
+- Even short idle periods add up across a city.
+- Knowing peak idling times helps reduce traffic pollution.
+- Local focus on **SF** and **Fremont** keeps it realistic and manageable.
+
+*Built by a student using Streamlit, Pandas, and Altair.*
 """)
