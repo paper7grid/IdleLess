@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
+import random
 
 st.set_page_config(page_title="Screen Time & Mental Health", page_icon="📱")
 
