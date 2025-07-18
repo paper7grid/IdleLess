@@ -4,7 +4,22 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 from datetime import datetime
+import json
+import requests
+import streamlit as st
 
+def fetch_traffic_events():
+    url = "https://api.511.org/traffic/events?api_key=4810bc0a-1568-46ed-bbf3-3709472efbc2"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        # Decode text with utf-8-sig to handle BOM
+        text = response.content.decode("utf-8-sig")
+        data = json.loads(text)  # parse JSON manually
+        return data.get("events", [])
+    except Exception as e:
+        st.error(f"Error fetching data: {e}")
+        return []
 st.set_page_config(page_title="IdleLess Dashboard", page_icon="🚦")
 st.title("🚦 IdleLess: Reducing Urban Idle Time")
 
@@ -13,16 +28,7 @@ This app focuses on traffic idle patterns in **San Francisco (SF)** and **Fremon
 """)
 
 # --- Simplified Static Data ---
-def fetch_traffic_events():
-    url = "https://api.511.org/traffic/events?api_key=4810bc0a-1568-46ed-bbf3-3709472efbc2"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raises error if request failed
-        data = response.json()
-        return data["events"]  # This depends on the actual JSON structure
-    except Exception as e:
-        st.error(f"Error fetching data: {e}")
-        return []
+
 
 def parse_event_hours(events):
     hours = []
