@@ -11,7 +11,7 @@ st.write("Welcome to **ScrollScope** – a project that helps you explore how yo
 st.sidebar.title("📂 Navigation")
 st.sidebar.markdown("Choose a page:")
 
-st.sidebar.page_link("pages/sleep.py", label="Mental Health Insights")
+st.sidebar.page_link("pages/Mental_Health.py", label="Mental Health Insights")
 st.sidebar.page_link("pages/Activity.py", label="Activity Generator")
 
 st.markdown("---")
