@@ -1,3 +1,7 @@
+import streamlit as st
+import pandas as pd
+import altair as alt
+import random
 activities = [
     "🎨 Paint or draw something creative!",
     "📚 Read a book or magazine.",
