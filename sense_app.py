@@ -12,7 +12,7 @@ st.sidebar.title("📂 Navigation")
 st.sidebar.markdown("Choose a page:")
 
 st.sidebar.page_link("pages/sleep.py", label="Mental Health Insights")
-st.sidebar.page_link("pages/gen.py", label="Activity Generator")
+st.sidebar.page_link("pages/Activity.py", label="Activity Generator")
 
 st.markdown("---")
 st.markdown("⬅️ Use the **sidebar** to navigate!")
