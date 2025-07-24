@@ -116,7 +116,7 @@ else:
         </style>
     """, unsafe_allow_html=True)
 # Title + Subtitlet
-st.markdown('<div class="title">:no_mobile_phones:Random Activity Generator</div>', unsafe_allow_html=True)
+st.markdown('<div class="title">No Mobile Phones:Random Activity Generator</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Step away from your screen. Try something real</div>', unsafe_allow_html=True)
 # Activities List
 activities = [
